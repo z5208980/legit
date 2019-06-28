@@ -1,0 +1,15 @@
+#!/bin/dash
+
+        # TODO
+        # arg check -m
+        # catch err: 
+            # usage: legit-commit [-a] -m commit-message
+            # nothing to commit
+        # mkdir COMMIT_EDITMSG
+        
+if [ $# -ne 2 ] || [ $1 != "-m" ] || echo "$2" | egrep -q "^-|^$"; then
+    echo "usage: legit-commit [-a] -m commit-message"; 
+    exit 0;  
+fi
+
+# cat "#number $2" >> "./legit/.git/COMMIT_EDITMSG";

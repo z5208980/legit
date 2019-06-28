@@ -3,6 +3,7 @@
         # TODO
         # convert to binary file
         # contain alpha-numeric characters plus '.', '-' and '_' characters.
+        # legit-add again
         
         
 if [ $# -eq 0 ]; then
@@ -12,7 +13,7 @@ fi
 
 for i in $@
 do
-    if echo "$i" | grep -qv "^[a-zA-Z0-9]"; then
+    if echo "$i" | egrep -qv "^[a-zA-Z0-9]"; then
         continue;
     fi
     
