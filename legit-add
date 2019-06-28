@@ -1,0 +1,10 @@
+#!/bin/dash
+
+# Error Handling
+if [ $# -eq 0 ]
+  then
+    echo "usage: legit-add <filenames>"; 
+    exit 0; 
+fi
+
+# Check if file exist
