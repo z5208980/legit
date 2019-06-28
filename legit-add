@@ -1,10 +1,23 @@
 #!/bin/dash
 
-# Error Handling
-if [ $# -eq 0 ]
-  then
+        # TODO
+        # convert to binary file
+        # contain alpha-numeric characters plus '.', '-' and '_' characters.
+        
+        
+if [ $# -eq 0 ]; then
     echo "usage: legit-add <filenames>"; 
     exit 0; 
 fi
 
-# Check if file exist
+for i in $@
+do
+    if echo "$i" | grep -qv "^[a-zA-Z0-9]"; then
+        continue;
+    fi
+    
+    if test -f "$i"; then
+        # add to index 
+        echo "$i" > ".legit/.git/index";
+    fi
+done

@@ -1,18 +1,28 @@
 #!/bin/dash
 
-# [[ $# > 0 ]] || echo "usage: legit-init"; exit 0;
-
-if [ $# -ne 0 ]
-  then
+        # TODO
+        # Nothing yet
+        
+# [ "$#" -ne 0 ] && echo "usage: legit-init"; exit 0;
+# [ -d ".legit" ] && echo "$0: error: .legit already exists"; exit 0;
+if [ $# -ne 0 ]; then
     echo "usage: legit-init"; 
     exit 0; 
 fi
 
-if [ -d ".legit" ]
-    then
+if [ -d ".legit" ]; then
     echo "$0: error: .legit already exists"; 
     exit 0;
 fi
 
 mkdir ".legit";
+mkdir ".legit/.git";
+mkdir ".legit/.git/HEAD";
+mkdir ".legit/.git/branches";
+mkdir ".legit/.git/config";
+mkdir ".legit/.git/description";
+mkdir ".legit/.git/hooks";
+mkdir ".legit/.git/info";
+mkdir ".legit/.git/objects";
+mkdir ".legit/.git/refs";
 echo "Initialized empty legit repository in .legit";
