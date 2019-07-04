@@ -11,6 +11,11 @@ if [ $# -eq 0 ]; then
     exit 0; 
 fi
 
+if ! [ -d ".legit" ]; then
+    echo "legit-add: error: no .legit directory containing legit repository exists";    # not $0
+    exit 0;
+fi
+
 for i in $@
 do
     if echo "$i" | egrep -qv "^[a-zA-Z0-9]"; then
@@ -18,7 +23,17 @@ do
     fi
     
     if test -f "$i"; then
-        # add to index 
-        echo "$i" > ".legit/.git/index";
+        # premission | NOT COMPLETED
+        permission=`stat -c %a "$i"`;
+
+        # sha1 | NOT COMPLETED
+        sha=`sha1sum "$i"`;
+
+        # store
+        echo "$permission $sha";
+        echo "$permission $sha" > ".legit/.git/index";
+    else
+        echo "legit-add: error: can not open '$i'";
     fi
 done
+

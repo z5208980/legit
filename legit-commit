@@ -5,11 +5,44 @@
         # catch err: 
             # usage: legit-commit [-a] -m commit-message
             # nothing to commit
-        # mkdir COMMIT_EDITMSG
         
 if [ $# -ne 2 ] || [ $1 != "-m" ] || echo "$2" | egrep -q "^-|^$"; then
     echo "usage: legit-commit [-a] -m commit-message"; 
     exit 0;  
 fi
 
-# cat "#number $2" >> "./legit/.git/COMMIT_EDITMSG";
+# store latest commit
+num="0";
+msg_file='.legit/.git/COMMIT_EDITMSG';
+if [ -s $msg_file ]; then            # Not Empty
+     # Format: # msg
+     num=`cut -d' ' -f1 $msg_file`;
+     num=`expr $num + 1`
+#    echo "$num $2" > $msg_file;
+#else
+#     echo "$num $2" > $msg_file;
+fi
+echo "$num $2" > $msg_file;
+# cat $msg_file;    # DEBUG
+
+# open index
+index='.legit/.git/index';
+cat $index;    # DEBUG
+# cat a b c | gzip > test_zip.gz 
+# sha1sum test_zip.gz
+
+# open HEAD at .legit/.git/logs
+log='.legit/.git/logs/HEAD';
+cat $log;      # DEBUG   
+# # msg >> .legit/.git/logs/HEAD
+# Format: 9189d07d0f5b730b12428a166a5c0f3a67166355 7ecb89dc849f2bfd7a263dd8b6fa05a0d7f75320 z5208980 <z5208980@cse.unsw.edu.au> 1561875896 +1000	commit: 4 test213
+log_old_hash="";
+log_new_hash="";
+log_username="";
+log_email="";
+log_something_1="";
+log_something_2="+1000";
+log_commit="    commit: $num $msg";
+log_info="$log_old_hash $log_new_hash $log_username_ $log_something_1 $log_something_2 $log_email $log_commit";
+echo "$log_info" >> $log;
+
