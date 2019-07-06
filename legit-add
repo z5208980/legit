@@ -1,11 +1,11 @@
-#!/bin/dash
+#!/usr/bin/env bash
 
 # TODO
-# contain alpha-numeric characters plus '.', '-' and '_' characters.
-        
+    # contain alpha-numeric characters plus '.', '-' and '_' characters.
+
 if [ $# -eq 0 ]; then
-    echo "usage: legit-add <filenames>"; 
-    exit 0; 
+    echo "usage: legit-add <filenames>";
+    exit 0;
 fi
 
 if ! [ -d ".legit" ]; then
@@ -16,10 +16,10 @@ fi
 index='.legit/index';
 for i in $@
 do
-    if echo "$i" | egrep -qv "^[a-zA-Z0-9]"; then
+    if echo "$i" | egrep -qv "^[a-zA-Z0-9.-_]|"; then
         continue;
     fi
-    
+
     if [ -f "$i" ] && [ -s "$i" ]; then
         # cat $i;
         # cpy into index
@@ -28,4 +28,3 @@ do
         echo "legit-add: error: can not open '$i'";
     fi
 done
-

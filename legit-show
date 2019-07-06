@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/usr/bin/env bash
 
 repo='.legit/logs/repo';
 commit_num=`echo $1 | cut -d':' -f1`;
@@ -8,7 +8,7 @@ else
       repo="$repo/.snapshot.$commit_num";
 fi
 # echo "$repo";
-      
+
 if [ ! -d "$repo" ]; then           # Directory does not exist
     echo "legit-show: error: unknown commit '$commit_num'";
     exit 0;
@@ -16,7 +16,7 @@ fi
 
 # echo $commit_num;
 file=`echo $1 | cut -d':' -f2-`;
-if [ ! -f "$repo/$file" ] && [ -z "$commit_num" ]; then       
+if [ ! -f "$repo/$file" ] && [ -z "$commit_num" ]; then
     echo "legit-show: error: 'c' not found in index";
     # echo "$repo";
 elif [ ! -f "$repo/$file" ] && [ ! -z "$commit_num" ]; then
@@ -24,4 +24,3 @@ elif [ ! -f "$repo/$file" ] && [ ! -z "$commit_num" ]; then
 else
     cat "$repo/$file";
 fi
-

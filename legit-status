@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/usr/bin/env bash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                       # Get latest repo #
@@ -17,13 +17,19 @@ done
 
 for i in `ls`
 do
+    # NEED TO TURN INTO HASH
     if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ]; then
         echo "$i - added to index";
     elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ]; then
         echo "$i - same as repo";
+    elif [ ! -f "$i" ] && [ -f "$index/$i" ]; then
+        # file: !HEAD >index >snapshot
+        echo "$i - file deleted";
+    elif [ ! -f "$i" ] && [ ! -f "$index/$i" ]; then
+        # file: !HEAD !index >snapshot
+        echo "$i - deleted";
     else
         echo "$i - untracked";
     fi
-   
-done
 
+done

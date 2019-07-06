@@ -1,30 +1,64 @@
-#!/bin/dash
+#!/usr/bin/env bash
 
+cached="0";
+forced="0";
+for i in "$@"
+do
+    # echo "$i";
+    if [ "$i" =  "--cached" ]; then
+        # echo "-a";
+        cached="1";
+    elif [ "$i" = "--force" ]; then
+        # echo "-m";
+        forced="1";
+    #     #file
+
+    fi
+done
+echo "$cached"; echo "$forced";
 
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
     exit 0;
 fi
 
+echo "index";
+for i in `ls $index`
+do
+    echo "$i";
+done
+
 index='.legit/index';
-if [ $1 = "--cached" ]; then
-    
-    for i in `ls $index`
-    do  
-        echo "$i";
-    done
-    echo "------";
+if [ $cached -eq "1" ]; then
+    echo "--cached";
     for i in "$@"
-    do  
-        if [ "$i" == "--cached" ]; then
+    do
+        # echo "$i";
+        if [ "$i" == "--cached" ] || [ "$i" == "--force" ] ; then
             continue;
-        elif [ -f "$i" ]; then
-            echo "legit-rm: error: '$i' is not in the legit repository";
+        elif [ -f "$index/$i" ]; then
+            echo "deleting: $i | from: $index/$i";
+            rm "$index/$i";
         else
-            echo "deleting from $i from index";
+            echo "legit-rm: error: '$i' is not in the legit repository";
         fi
-        echo "$i";
+    done
+elif [ $cached -eq "1" ]; then
+    echo "--force";
+
+else
+    echo "--both";
+    for i in "$@"
+    do
+        # echo "$i";
+        # if [ "$i" == "--cached" ] || [ "$i" == "--force" ] ; then
+        #     continue;
+        if [ -f "$index/$i" ]; then     # delete from index
+            echo "deleting: $i | from: $index/$i";
+            rm "$index/$i";
+        else
+            echo "legit-rm: error: '$i' is not in the legit repository";
+        fi
+        rm "$i";    # delete from HEAD
     done
 fi
-
-

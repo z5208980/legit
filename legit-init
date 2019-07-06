@@ -1,11 +1,7 @@
-#!/bin/dash
+#!/usr/bin/env bash
 
-        # TODO
-        # Nothing yet
-        
 if [ $# -ne 0 ]; then
-    echo "usage: legit-init"; 
-    exit 0; 
+    echo "usage: legit-init"; exit 0;
 fi
 
 if [ -d ".legit" ]; then
@@ -22,4 +18,3 @@ touch ".legit/logs/HEAD";              # git logs
 mkdir ".legit/logs/repo";
 
 echo "Initialized empty legit repository in .legit";
-
