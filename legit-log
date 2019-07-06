@@ -1,4 +1,7 @@
 #!/bin/dash
 
-log=`cut -d' ' -f7- .legit/.git/logs/HEAD`;
-
+log='.legit/logs/HEAD';
+# cat $log;
+# cat $log | egrep -w "commit: .*";
+logs=`cat $log | egrep -w "commit: .*" | cut -d' ' -f2- | sort -nr`;
+echo "$logs";

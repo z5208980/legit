@@ -3,8 +3,6 @@
         # TODO
         # Nothing yet
         
-# [ "$#" -ne 0 ] && echo "usage: legit-init"; exit 0;
-# [ -d ".legit" ] && echo "$0: error: .legit already exists"; exit 0;
 if [ $# -ne 0 ]; then
     echo "usage: legit-init"; 
     exit 0; 
@@ -15,21 +13,13 @@ if [ -d ".legit" ]; then
     exit 0;
 fi
 
-mkdir ".legit";
-mkdir ".legit/.git";
-touch ".legit/.git/COMMIT_EDITMSG";         # latest commit-msg with #
-touch ".legit/.git/index";                  # for legit-add
-mkdir ".legit/.git/logs";
-touch ".legit/.git/logs/HEAD";              # git logs
 
-# useless so far
-echo "ref: refs/heads/master" > ".legit/.git/HEAD";
-mkdir ".legit/.git/branches";
-mkdir ".legit/.git/config";
-touch ".legit/.git/description";
-mkdir ".legit/.git/hooks";
-mkdir ".legit/.git/info";
-mkdir ".legit/.git/objects";
-mkdir ".legit/.git/refs";
+mkdir ".legit";
+touch ".legit/COMMIT_EDITMSG";         # latest commit msg stored here
+mkdir ".legit/index";                  # staging file
+mkdir ".legit/logs";
+touch ".legit/logs/HEAD";              # git logs
+mkdir ".legit/logs/repo";
+
 echo "Initialized empty legit repository in .legit";
 

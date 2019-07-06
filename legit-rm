@@ -1,0 +1,30 @@
+#!/bin/dash
+
+
+if [ "$#" -eq 0 ]; then
+    echo "usage: legit-rm [--force] [--cached] <filenames>"
+    exit 0;
+fi
+
+index='.legit/index';
+if [ $1 = "--cached" ]; then
+    
+    for i in `ls $index`
+    do  
+        echo "$i";
+    done
+    echo "------";
+    for i in "$@"
+    do  
+        if [ "$i" == "--cached" ]; then
+            continue;
+        elif [ -f "$i" ]; then
+            echo "legit-rm: error: '$i' is not in the legit repository";
+        else
+            echo "deleting from $i from index";
+        fi
+        echo "$i";
+    done
+fi
+
+

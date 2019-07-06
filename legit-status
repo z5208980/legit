@@ -1,0 +1,29 @@
+#!/bin/dash
+
+index='.legit/index';            # MAKE SURE TO CHANGE .git
+commit_num="0";                       # Get latest repo #
+msg_file='.legit/COMMIT_EDITMSG';
+if [ -s $msg_file ]; then            # Not Empty
+     commit_num=`cut -d' ' -f1 $msg_file`;
+fi
+repo='.legit/logs/repo';
+snapshot="$repo/.snapshot.$commit_num";
+echo $snapshot;
+
+for i in `ls $snapshot`
+do
+    echo "$i";
+done
+
+for i in `ls`
+do
+    if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ]; then
+        echo "$i - added to index";
+    elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ]; then
+        echo "$i - same as repo";
+    else
+        echo "$i - untracked";
+    fi
+   
+done
+

@@ -1,10 +1,7 @@
 #!/bin/dash
 
-        # TODO
-        # convert to binary file
-        # contain alpha-numeric characters plus '.', '-' and '_' characters.
-        # legit-add again
-        
+# TODO
+# contain alpha-numeric characters plus '.', '-' and '_' characters.
         
 if [ $# -eq 0 ]; then
     echo "usage: legit-add <filenames>"; 
@@ -16,22 +13,17 @@ if ! [ -d ".legit" ]; then
     exit 0;
 fi
 
+index='.legit/index';
 for i in $@
 do
     if echo "$i" | egrep -qv "^[a-zA-Z0-9]"; then
         continue;
     fi
     
-    if test -f "$i"; then
-        # premission | NOT COMPLETED
-        permission=`stat -c %a "$i"`;
-
-        # sha1 | NOT COMPLETED
-        sha=`sha1sum "$i"`;
-
-        # store
-        echo "$permission $sha";
-        echo "$permission $sha" > ".legit/.git/index";
+    if [ -f "$i" ] && [ -s "$i" ]; then
+        # cat $i;
+        # cpy into index
+        cp "$i" "$index/$i"
     else
         echo "legit-add: error: can not open '$i'";
     fi
