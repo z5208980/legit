@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 cached="0";
 forced="0";
@@ -29,7 +29,7 @@ fi
 #done
 
 index='.legit/index';
-elif [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
+if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
     # echo "--cached";
     for i in "$@"
     do
@@ -70,8 +70,14 @@ elif [ $forced -eq "1" ]; then
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
-        rm "$i";    # delete from HEAD
-        sed -i '/$i/d' filename  # delete from status
+
+        if [ -f "$i" ]; then
+            rm "$i";    # delete from HEAD
+        fi
+        sed -i -e "/^$i\$/d" "$index/.status"; # delete from status
+        # remove -e and remove this code
+        rm "$index/.status-e";
+
     done
 else
     # echo "--both";
@@ -89,3 +95,21 @@ else
         rm "$i";    # delete from HEAD
     done
 fi
+
+# $ echo 4 >>a
+# $ echo 5 >>b
+# $ echo 6 >>c
+# $ echo 7 >d
+# $ echo 8 >e
+# $ legit-add b c d e
+# $ echo 9 >b
+# $ echo 0 >d
+# $ legit-rm --cached a c
+# $ legit-rm --force --cached b
+# $ legit-rm --force --cached e
+# $ legit-rm --force d
+# $ legit-status
+# a - untracked
+# b - untracked
+# c - untracked
+# e - untracked

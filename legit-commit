@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 # TODO
 # catch err:
@@ -28,17 +28,22 @@ if [ $msg -eq "0" ] || [ $# -lt 2 ] || [ $valid_msg -eq "0" ]; then
     echo "usage: legit-commit [-a] -m commit-message"; exit 0;
 fi
 
-# NEED TO DO ################################################################
+####  -a  ####
 if [ $all -eq "1" ]; then
-    echo "--all";
-    sh legit-status;
+    # echo "--all";
+    # NOT PROPERLY HANDLED DELETED FILES IN MAIN OR INDEX !!!!!
+    # NOTE THIS COULD BE INEFFICIENT
+    for i in "`sh legit-status | egrep -v "untracked|same as repo|delete" | cut -d'-' -f1`"
+    do
+        sh legit-add "$i";
+    done
 fi
 # exit 0;
 #############################################################################
 
 index='.legit/index';
 touch "$index/.status";
-#### Stores all the file for status ####
+####  Stores all the file for status  ####
 for i in `ls`
 do
     if [ "`grep -o "^$i\$" "$index/.status"`" ]; then

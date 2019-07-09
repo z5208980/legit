@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
@@ -38,15 +38,11 @@ do
         snap_sha=`shasum "$snapshot/$i" | cut -d' ' -f1`;
     fi
 
-    # echo "main: $main_sha";
-    # echo "index: $index_sha";
-    # echo "repo: $snap_sha";
-
     if   [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
         echo "$i - file changed, different changes staged for commit";
     elif [ "$main_sha" != "0" ] && [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - file changed, changes staged for commit";
-    elif [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" = "$snap_sha" ] && [ "$snap_sha" != "0" ]; then        
+    elif [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" = "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - file changed, changes not staged for commit";
     elif [ "$main_sha" = "0" ] && [ "$index_sha" = "$snap_sha" ]; then
         echo "$i - file deleted";
@@ -57,6 +53,9 @@ do
     elif [ "$main_sha" = "$index_sha" ] && [ "$snap_sha" = "0" ]; then
         echo "$i - added to index";
     else
+        # echo "main: $main_sha";
+        # echo "index: $index_sha";
+        # echo "repo: $snap_sha";
         echo "$i - untracked";
     fi
 
