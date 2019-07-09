@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env dash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.

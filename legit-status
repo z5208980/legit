@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env dash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                       # Get latest repo #

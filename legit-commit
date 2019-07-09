@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env dash
 
 # TODO
 # catch err:
@@ -37,14 +37,19 @@ fi
 
 index='.legit/index';
 #### Stores all the file for status ####
+
+if [ ! -f "$index/.status" ]; then
+   touch "$index/.status";
+fi
+
 for i in `ls`
 do
-    if [ "`grep -o "^$i\$" "$index/.status"`" ]; then
-        # already in .status don't add
-        # echo "$i";
-        continue;
-    fi
-    echo "$i" >> "$index/.status";  # useful for deleted files
+   if [ "`grep -o "^$i\$" "$index/.status"`" ]; then
+       # already in .status don't add
+       # echo "$i";
+       continue;
+   fi
+   echo "$i" >> "$index/.status";  # useful for deleted files
 done
 # sort "$index/.status" > "$index/.status";
 # exit 0;

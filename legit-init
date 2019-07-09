@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env dash
 
 if [ $# -ne 0 ]; then
     echo "usage: legit-init"; exit 0;
