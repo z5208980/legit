@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 cached="0";
 forced="0";
