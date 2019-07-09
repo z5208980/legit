@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 # TODO
 # catch err:
@@ -31,11 +31,13 @@ fi
 # NEED TO DO ################################################################
 if [ $all -eq "1" ]; then
     echo "--all";
+    sh legit-status;
 fi
 # exit 0;
 #############################################################################
 
 index='.legit/index';
+touch "$index/.status";
 #### Stores all the file for status ####
 for i in `ls`
 do

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 if [ $# -ne 0 ]; then
     echo "usage: legit-init"; exit 0;

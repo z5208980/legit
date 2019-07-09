@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
@@ -42,19 +42,19 @@ do
     # echo "index: $index_sha";
     # echo "repo: $snap_sha";
 
-    if   [[ "$main_sha" != "0" ]] && [[ "$main_sha" != "$index_sha" ]] && [[ "$index_sha" != "$snap_sha" ]]; then
+    if   [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
         echo "$i - file changed, different changes staged for commit";
-    elif [[ "$main_sha" != "0" ]] && [[ "$main_sha" == "$index_sha" ]] && [[ "$index_sha" != "$snap_sha" ]] && [[ "$snap_sha" != "0" ]]; then
+    elif [ "$main_sha" != "0" ] && [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - file changed, changes staged for commit";
-    elif [[ "$main_sha" != "0" ]] && [[ "$main_sha" != "$index_sha" ]] && [[ "$index_sha" == "$snap_sha" ]] && [[ "$snap_sha" != "0" ]]; then         # [[ file has change ]] && [[ not in index ]]
+    elif [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" = "$snap_sha" ] && [ "$snap_sha" != "0" ]; then        
         echo "$i - file changed, changes not staged for commit";
-    elif [[ "$main_sha" == "0" ]] && [[ "$index_sha" == "$snap_sha" ]]; then
+    elif [ "$main_sha" = "0" ] && [ "$index_sha" = "$snap_sha" ]; then
         echo "$i - file deleted";
-    elif [[ "$main_sha" == "0" ]] && [[ "$main_sha" == "$index_sha" ]] && [[ "$snap_sha" != "0" ]]; then
+    elif [ "$main_sha" = "0" ] && [ "$main_sha" = "$index_sha" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - deleted";
-    elif [[ "$main_sha" == "$index_sha" ]] && [[ "$index_sha" == "$snap_sha" ]]; then
+    elif [ "$main_sha" = "$index_sha" ] && [ "$index_sha" = "$snap_sha" ]; then
         echo "$i - same as repo";
-    elif [[ "$main_sha" == "$index_sha" ]] && [[ "$snap_sha" == "0" ]]; then
+    elif [ "$main_sha" = "$index_sha" ] && [ "$snap_sha" = "0" ]; then
         echo "$i - added to index";
     else
         echo "$i - untracked";
