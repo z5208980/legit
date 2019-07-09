@@ -3,7 +3,7 @@
 # TODO
 # catch err:
     # usage: legit-commit [-a] -m commit-message
-    
+
 all="0";
 msg="0";
 valid_msg="0";
@@ -24,7 +24,6 @@ do
 done
 # echo "$all"; echo "$msg"; echo "$valid_msg";
 
-##### WILL MERGE #####
 if [ $msg -eq "0" ] || [ $# -lt 2 ] || [ $valid_msg -eq "0" ]; then
     echo "usage: legit-commit [-a] -m commit-message"; exit 0;
 fi
@@ -36,8 +35,22 @@ fi
 # exit 0;
 #############################################################################
 
-##### whether to commit or not #####
 index='.legit/index';
+#### Stores all the file for status ####
+for i in `ls`
+do
+    if [ "`grep -o "^$i\$" "$index/.status"`" ]; then
+        # already in .status don't add
+        # echo "$i";
+        continue;
+    fi
+    echo "$i" >> "$index/.status";  # useful for deleted files
+done
+# sort "$index/.status" > "$index/.status";
+# exit 0;
+
+##### whether to commit or not #####
+# index='.legit/index';
 if [ -f "$index/.index" ]; then
     commit_flag="0";
     for i in `ls $index`

@@ -8,19 +8,26 @@ if [ -s $msg_file ]; then            # Not Empty
 fi
 repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
-echo $snapshot;
 
-for i in `ls $snapshot`
-do
-    echo "$i";
-done
+# echo $snapshot;
+# for i in `ls $snapshot`
+# do
+#     echo "$i";
+# done
+#
+# # index_files=`cut -d' ' -f2 "$index/.index"`;
+# echo "$index";
+# echo "`cut -d' ' -f1 "$index/.index"`";
+# echo "$snapshot";
 
-for i in `ls`
+for i in `cat "$index/.status"`
 do
-    # NEED TO TURN INTO HASH
-    if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ]; then
+    echo "main: `shasum $i`";
+    echo "repo: `shasum "$snapshot/$i"`";
+
+    if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ] && [ -f "$i" ]; then
         echo "$i - added to index";
-    elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ]; then
+    elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ] && [ -f "$i" ]; then
         echo "$i - same as repo";
     elif [ ! -f "$i" ] && [ -f "$index/$i" ]; then
         # file: !HEAD >index >snapshot
@@ -28,8 +35,32 @@ do
     elif [ ! -f "$i" ] && [ ! -f "$index/$i" ]; then
         # file: !HEAD !index >snapshot
         echo "$i - deleted";
+    #### After checking that the files are not deleted, check it they have changed ####
+# elif [ `shasum $i` == "0" ]; then
+#         # file has changed but not yet legit-add
+#         echo "$i - file has changed";
     else
         echo "$i - untracked";
     fi
-
 done
+
+# for i in `ls`
+# do
+#     # NEED TO TURN INTO HASH
+#     # echo "$i";
+#
+#     if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ]; then
+#         echo "$i - added to index";
+#     elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ]; then
+#         echo "$i - same as repo";
+#     elif [ ! -f "$i" ] && [ -f "$index/$i" ]; then
+#         # file: !HEAD >index >snapshot
+#         echo "$i - file deleted";
+#     elif [ ! -f "$i" ] && [ ! -f "$index/$i" ]; then
+#         # file: !HEAD !index >snapshot
+#         echo "$i - deleted";
+#     else
+#         echo "$i - untracked";
+#     fi
+#
+# done

@@ -16,7 +16,7 @@ fi
 index='.legit/index';
 for i in $@
 do
-    if echo "$i" | egrep -qv "^[a-zA-Z0-9.-_]|"; then
+    if echo "$i" | egrep -qv "^[a-zA-Z0-9.-_]"; then
         continue;
     fi
 
