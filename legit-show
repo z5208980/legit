@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/bash
 
 repo='.legit/logs/repo';
 commit_num=`echo $1 | cut -d':' -f1`;
@@ -17,10 +17,10 @@ fi
 # echo $commit_num;
 file=`echo $1 | cut -d':' -f2-`;
 if [ ! -f "$repo/$file" ] && [ -z "$commit_num" ]; then
-    echo "legit-show: error: 'c' not found in index";
+    echo "legit-show: error: '$file' not found in index";
     # echo "$repo";
 elif [ ! -f "$repo/$file" ] && [ ! -z "$commit_num" ]; then
-    echo "legit-show: error: 'c' not found in commit $commit_num";
+    echo "legit-show: error: '$file' not found in commit $commit_num";
 else
     cat "$repo/$file";
 fi

@@ -1,7 +1,7 @@
-#!/usr/bin/env dash
+#!/bin/bash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
-commit_num="0";                       # Get latest repo #
+commit_num="0";                      # Get latest repo #
 msg_file='.legit/COMMIT_EDITMSG';
 if [ -s $msg_file ]; then            # Not Empty
      commit_num=`cut -d' ' -f1 $msg_file`;
@@ -22,26 +22,45 @@ snapshot="$repo/.snapshot.$commit_num";
 
 for i in `cat "$index/.status"`
 do
-    echo "main: `shasum $i`";
-    echo "repo: `shasum "$snapshot/$i"`";
 
-    if [ -f "$index/$i" ] && [ ! -f "$snapshot/$i" ] && [ -f "$i" ]; then
-        echo "$i - added to index";
-    elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ] && [ -f "$i" ]; then
-        echo "$i - same as repo";
-    elif [ ! -f "$i" ] && [ -f "$index/$i" ]; then
-        # file: !HEAD >index >snapshot
+    main_sha="0";
+    if [ -f "$i" ]; then
+        main_sha=`shasum $i | cut -d' ' -f1`;
+    fi
+
+    index_sha="0";
+    if [ -f "$index/$i" ]; then
+        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+    fi
+
+    snap_sha="0";
+    if [ -f "$snapshot/$i" ]; then
+        snap_sha=`shasum "$snapshot/$i" | cut -d' ' -f1`;
+    fi
+
+    # echo "main: $main_sha";
+    # echo "index: $index_sha";
+    # echo "repo: $snap_sha";
+
+    if   [[ "$main_sha" != "0" ]] && [[ "$main_sha" != "$index_sha" ]] && [[ "$index_sha" != "$snap_sha" ]]; then
+        echo "$i - file changed, different changes staged for commit";
+    elif [[ "$main_sha" != "0" ]] && [[ "$main_sha" == "$index_sha" ]] && [[ "$index_sha" != "$snap_sha" ]] && [[ "$snap_sha" != "0" ]]; then
+        echo "$i - file changed, changes staged for commit";
+    elif [[ "$main_sha" != "0" ]] && [[ "$main_sha" != "$index_sha" ]] && [[ "$index_sha" == "$snap_sha" ]] && [[ "$snap_sha" != "0" ]]; then         # [[ file has change ]] && [[ not in index ]]
+        echo "$i - file changed, changes not staged for commit";
+    elif [[ "$main_sha" == "0" ]] && [[ "$index_sha" == "$snap_sha" ]]; then
         echo "$i - file deleted";
-    elif [ ! -f "$i" ] && [ ! -f "$index/$i" ]; then
-        # file: !HEAD !index >snapshot
+    elif [[ "$main_sha" == "0" ]] && [[ "$main_sha" == "$index_sha" ]] && [[ "$snap_sha" != "0" ]]; then
         echo "$i - deleted";
-    #### After checking that the files are not deleted, check it they have changed ####
-# elif [ `shasum $i` == "0" ]; then
-#         # file has changed but not yet legit-add
-#         echo "$i - file has changed";
+    elif [[ "$main_sha" == "$index_sha" ]] && [[ "$index_sha" == "$snap_sha" ]]; then
+        echo "$i - same as repo";
+    elif [[ "$main_sha" == "$index_sha" ]] && [[ "$snap_sha" == "0" ]]; then
+        echo "$i - added to index";
     else
         echo "$i - untracked";
     fi
+
+    # Case of other files that is not included in status
 done
 
 # for i in `ls`
@@ -62,5 +81,31 @@ done
 #     else
 #         echo "$i - untracked";
 #     fi
+
+
+# if [ ! -f "$i" ] && [ -f "$index/$i" ]; then
+#     # not in HEAD but in index  [rm]
+#     echo "$i - file deleted";
+# elif [ ! -f "$i" ] && [ ! -f "$index/$i" ]; then
+#     # not in HEAD and not in index  [legit-rm]
+#     echo "$i - deleted";
+# elif [ ! -f "$index/$i" ] && [ ! -f "$snapshot/$i" ] && [ -f "$i" ]; then
+#     # file not in index or repo but in HEAD
+#     echo "$i - untracked";
+# elif [[ "$main_sha" == "$snap_sha" ]] && [ -f "$i" ]; then
+# # elif [ -f "$index/$i" ] && [ -f "$snapshot/$i" ] && [ -f "$i" ]; then
+#     echo "$i - same as repo";
+# elif [ -f "$index/$i" ] && [ -f "$i" ] && [ ! -f "$snapshot/$i" ]; then
+#     # file is in HEAD, index but not in repo
+#     echo "$i - added to index";
+# #### After checking that the files are not deleted, check it they have changed ####
+# elif [[ "$main_sha" != "$snap_sha" ]]; then
+#     # NEED TO CHANGE FOR DASH
+#     # file has changed but not yet legit-add
+#     echo "$i - file has changed";
+# else
+#     # not in repo
+#     echo "$i - untracked";
+# fi
 #
 # done

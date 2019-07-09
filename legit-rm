@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/bash
 
 cached="0";
 forced="0";

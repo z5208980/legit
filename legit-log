@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/bash
 
 log='.legit/logs/HEAD';
 # cat $log;

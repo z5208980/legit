@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/bash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
@@ -20,7 +20,7 @@ do
         continue;
     fi
 
-    if [ -f "$i" ] && [ -s "$i" ]; then
+    if [ -f "$i" ]; then # [ -s "$i" ]
         # cat $i;
         # cpy into index
         cp "$i" "$index/$i"
