@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
@@ -20,6 +20,12 @@ snapshot="$repo/.snapshot.$commit_num";
 # echo "`cut -d' ' -f1 "$index/.index"`";
 # echo "$snapshot";
 
+# cat "$index/.index";
+# for i in `cat "$index/.status"`
+# do
+# done
+# exit 0;
+
 for i in `cat "$index/.status"`
 do
 
@@ -33,10 +39,15 @@ do
         index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
     fi
 
-    snap_sha="0";
-    if [ -f "$snapshot/$i" ]; then
-        snap_sha=`shasum "$snapshot/$i" | cut -d' ' -f1`;
+    # echo "$i";
+    snap_sha="`grep "$i\$" "$index/.index" | cut -d' ' -f1`";
+    if [ ! -n "$snap_sha" ]; then
+        snap_sha="0";
     fi
+    #
+    # echo "main: $main_sha";
+    # echo "index: $index_sha";
+    # echo "repo: $snap_sha";
 
     if   [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
         echo "$i - file changed, different changes staged for commit";
@@ -53,9 +64,6 @@ do
     elif [ "$main_sha" = "$index_sha" ] && [ "$snap_sha" = "0" ]; then
         echo "$i - added to index";
     else
-        # echo "main: $main_sha";
-        # echo "index: $index_sha";
-        # echo "repo: $snap_sha";
         echo "$i - untracked";
     fi
 
@@ -108,3 +116,19 @@ done
 # fi
 #
 # done
+
+# b - same as repo
+# c - same as repo
+# d - file deleted
+# diary.txt - untracked
+# f - file changed, different changes staged for commit
+# g - same as repo
+# h - untracked
+# legit-add - untracked
+# legit-commit - untracked
+# legit-init - untracked
+# legit-log - untracked
+# legit-rm - untracked
+# legit-show - untracked
+# legit-status - untracked
+# z - same as repo
