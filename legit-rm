@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 cached="0";
 forced="0";
@@ -15,16 +15,16 @@ do
 
     fi
 done
-echo "$cached"; echo "$forced";
+# echo "$cached"; echo "$forced";
 
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
     exit 0;
 fi
-if [ "$cached" -eq 0 ] && [ "$forced" -eq 0 ]; then
-    echo "usage: legit-rm [--force] [--cached] <filenames>"
-    exit 0;
-fi
+#if [ "$cached" -eq 0 ] && [ "$forced" -eq 0 ]; then
+#    echo "usage: legit-rm [--force] [--cached] <filenames>"
+#    exit 0;
+#fi
 
 #echo "index";
 #for i in `ls $index`
@@ -34,7 +34,7 @@ fi
 
 index='.legit/index';
 if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
-    echo "--both";
+    # echo "--both";
     for i in "$@"
     do
         # echo "$i";
@@ -48,7 +48,7 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
         fi
     done
 elif [ $cached -eq "1" ]; then
-    echo "--cached";
+    # echo "This only deletes from index";
     for i in "$@"
     do
         # echo "$i";
@@ -61,18 +61,31 @@ elif [ $cached -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
 
-        cat "$index/.index";
-        echo "$i";
-
-        # removes it from the index reference to latest snapshot
-        sed -i -e "/\/$i\$/d" "$index/.index"; # delete from status
-        # remove -e and remove this code
-        rm "$index/.index-e";
-        # removes it from the index reference to latest snapshot
+        # cat "$index/.index";
+        # echo "$i";        
+        # FOR LINUX
+        sed -i "/\/$i\$/d" "$index/.index"; # delete from status
+        
+        # FOR MAC
+        # sed -i -e "/\/$i\$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
 
     done
 elif [ $forced -eq "1" ]; then
-    echo "--force";
+    # echo "This deletes from main, index, and the status --> makes it untracked";
+    
+    main_sha="0";
+    if [ -f "$i" ]; then
+        main_sha=`shasum $i | cut -d' ' -f1`;
+    fi
+
+    index_sha="0";
+    if [ -f "$index/$i" ]; then
+        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+    fi
+    
+    # echo "main: $main_sha";
+    # echo "index: $index_sha";
     for i in "$@"
     do
         # echo "$i";
@@ -88,17 +101,25 @@ elif [ $forced -eq "1" ]; then
         if [ -f "$i" ]; then
             rm "$i";    # delete from HEAD
         fi
-        sed -i -e "/^$i\$/d" "$index/.status"; # delete from status
-        # remove -e and remove this code
-        rm "$index/.status-e";
+        
+        # cat "$index/.index";
+        # echo "$i";        
+        # FOR LINUX
+        sed -i "/\/$i\$/d" "$index/.index"; # delete from status
+        
+        # FOR MAC
+        # sed -i -e "/\/$i\$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
     done
 else
-    echo "--both";
+    # echo "This deletes from main and index --> makes it deleted";
     for i in "$@"
     do
-        echo "$i";
-        if [ "$i" == "--cached" ] || [ "$i" == "--force" ] ; then
+        # echo "$i";
+        if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
+        fi
+        
         if [ -f "$index/$i" ]; then     # delete from index
             # echo "deleting: $i | from: $index/$i";
             rm "$index/$i";
@@ -126,3 +147,4 @@ fi
 # b - untracked
 # c - untracked
 # e - untracked
+

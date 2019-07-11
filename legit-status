@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
@@ -44,7 +44,7 @@ do
     if [ ! -n "$snap_sha" ]; then
         snap_sha="0";
     fi
-    #
+    
     # echo "main: $main_sha";
     # echo "index: $index_sha";
     # echo "repo: $snap_sha";
