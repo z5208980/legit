@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 repo='.legit/logs/repo';
 commit_num=`echo $1 | cut -d':' -f1`;
@@ -11,7 +11,7 @@ fi
 
 if [ ! -d "$repo" ]; then           # Directory does not exist
     echo "legit-show: error: unknown commit '$commit_num'";
-    exit 0;
+    exit 1;
 fi
 
 # echo $commit_num;

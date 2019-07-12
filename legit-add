@@ -1,16 +1,16 @@
-#!/bin/dash
+#!/bin/bash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
 
 if [ $# -eq 0 ]; then
     echo "usage: legit-add <filenames>";
-    exit 0;
+    exit 1;
 fi
 
 if ! [ -d ".legit" ]; then
     echo "legit-add: error: no .legit directory containing legit repository exists";    # not $0
-    exit 0;
+    exit 1;
 fi
 
 index='.legit/index';
@@ -26,5 +26,6 @@ do
         cp "$i" "$index/$i"
     else
         echo "legit-add: error: can not open '$i'";
+        exit 1;     # TODO: delete if fail autotest
     fi
 done

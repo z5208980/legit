@@ -1,12 +1,12 @@
-#!/bin/dash
+#!/bin/bash
 
 if [ $# -ne 0 ]; then
-    echo "usage: legit-init"; exit 0;
+    echo "usage: legit-init"; exit 1;
 fi
 
 if [ -d ".legit" ]; then
     echo "legit-init: error: .legit already exists";    # not $0
-    exit 0;
+    exit 1;
 fi
 
 

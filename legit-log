@@ -1,6 +1,9 @@
-#!/bin/dash
+#!/bin/bash
 
 log='.legit/logs/HEAD';
+if [ ! -f $log ]; then
+    echo "no commits"; exit 1;
+fi
 # cat $log;
 # cat $log | egrep -w "commit: .*";
 logs=`cat $log | egrep -w "commit: .*" | cut -d' ' -f2- | sort -nr`;
