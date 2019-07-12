@@ -182,3 +182,41 @@ done
 # f - same as repo
 # g - added to index
 # h - untracked
+
+# $ legit-init
+# Initialized empty legit repository in .legit
+# $ echo hello >a
+# $ legit-add a
+# $ legit-commit -m commit-0
+# Committed as commit 0
+# $ legit-rm a
+# $ legit-status
+# a - deleted
+# $ legit-commit -m commit-1
+# Committed as commit 1
+# $ legit-status
+# $ echo world >a
+# $ legit-status
+# a - untracked
+# $ legit-commit -m commit-2
+# nothing to commit
+# $ legit-add a
+# $ legit-commit -m commit-2
+# Committed as commit 2
+# $ legit-rm a
+# $ legit-commit -m commit-3
+# Committed as commit 3
+# $ legit-show :a
+# legit-show: error: 'a' not found in index
+# $ legit-show 0:a
+# hello
+# $ legit-show 1:a
+# legit-show: error: 'a' not found in commit 1
+# $ legit-show 2:a
+# world
+# $ legit-show 3:a
+# legit-show: error: 'a' not found in commit 3
+# $ legit-show 4:a
+# legit-show: error: unknown commit '4'
+
+

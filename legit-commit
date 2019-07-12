@@ -147,6 +147,28 @@ do
     cp "$index/$i" "$snapshot/$i";
     echo "`shasum $snapshot/$i`" >> "$index/.index";       # update hashes
     echo "`shasum $snapshot/$i`" >> "$snapshot/.index";       # update hashes
+    
+    # update status if file has been legit-rm or rm
+    
+done
+
+# update status to match HEAD
+for i in `cat "$index/.status"`
+do
+    main_sha="0";
+    if [ -f "$i" ]; then
+        main_sha=`shasum $i | cut -d' ' -f1`;
+    fi
+
+    index_sha="0";
+    if [ -f "$index/$i" ]; then
+        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+    fi
+    
+    if [ "$main_sha" = "0" ] && [ "$main_sha" = "$index_sha" ]; then
+        # echo "HERE";
+        sed -i "/^$i$/d" "$index/.status";
+    fi
 done
 
 ##### .logs/HEAD #####

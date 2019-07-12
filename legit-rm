@@ -81,20 +81,24 @@ elif [ $cached -eq "1" ]; then
 elif [ $forced -eq "1" ]; then
     # echo "This deletes from main, index, and the status --> makes it untracked";
 
-    main_sha="0";
-    if [ -f "$i" ]; then
-        main_sha=`shasum $i | cut -d' ' -f1`;
-    fi
 
-    index_sha="0";
-    if [ -f "$index/$i" ]; then
-        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
-    fi
 
     # echo "main: $main_sha";
     # echo "index: $index_sha";
     for i in "$@"
     do
+        main_sha="0";
+        if [ -f "$i" ]; then
+        main_sha=`shasum $i | cut -d' ' -f1`;
+        fi
+
+        index_sha="0";
+        if [ -f "$index/$i" ]; then
+        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+        fi
+        echo "main: $main_sha";
+        echo "index: $index_sha";
+    
         # echo "$i";
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
@@ -188,3 +192,45 @@ fi
 # $ legit-rm b
 # $ legit-commit -m "fourth commit"
 # Committed as commit 4
+
+$ legit-init
+Initialized empty legit repository in .legit
+$ echo 1 >a
+$ echo 2 >b
+$ echo 3 >c
+$ legit-add a b c
+$ legit-commit -m "first commit"
+Committed as commit 0
+$ echo 4 >>a
+$ echo 5 >>b
+$ echo 6 >>c
+$ echo 7 >d
+$ echo 8 >e
+$ legit-add b c d
+$ echo 9 >b
+$ legit-rm a
+legit-rm: error: 'a' in repository is different to working file
+$ legit-rm b
+legit-rm: error: 'b' in index is different to both working file and repository
+$ legit-rm c
+legit-rm: error: 'c' has changes staged in the index
+$ legit-rm d
+legit-rm: error: 'd' has changes staged in the index
+$ legit-rm e
+legit-rm: error: 'e' is not in the legit repository
+$ legit-rm --cached a
+$ legit-rm --cached b
+legit-rm: error: 'b' in index is different to both working file and repository
+$ legit-rm --cached c
+$ legit-rm --cached d
+$ legit-rm --cached e
+legit-rm: error: 'e' is not in the legit repository
+$ legit-rm --force a
+legit-rm: error: 'a' is not in the legit repository
+$ legit-rm --force b
+$ legit-rm --force c
+legit-rm: error: 'c' is not in the legit repository
+$ legit-rm --force d
+legit-rm: error: 'd' is not in the legit repository
+$ legit-rm --force e
+legit-rm: error: 'e' is not in the legit repository
