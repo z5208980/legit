@@ -40,7 +40,7 @@ do
     fi
 
     # echo "$i";
-    snap_sha="`grep "$i\$" "$index/.index" | cut -d' ' -f1`";
+    snap_sha="`grep "$i\$" "$snapshot/.index" | cut -d' ' -f1`";
     if [ ! -n "$snap_sha" ]; then
         snap_sha="0";
     fi

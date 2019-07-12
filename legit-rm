@@ -48,11 +48,11 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
         fi
 
         # FOR LINUX
-        sed -i "/$i\$/d" "$index/.index"; # delete from status
+        # sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        # rm "$index/.index-e";
+        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        rm "$index/.index-e";
     done
 elif [ $cached -eq "1" ]; then
     # echo "This only deletes from index";
@@ -133,9 +133,15 @@ else
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
+
         # cat "$index/.index";
-        sed -i "/$i$/d" "$index/.index"; # delete from .index
+        sed -i "/$i\$/d" "$index/.index"; # delete from .index
+
+        # sed -i -e "/$i$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
+
         rm "$i";    # delete from HEAD
+
     done
 fi
 
