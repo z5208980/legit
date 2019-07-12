@@ -19,5 +19,6 @@ mkdir ".legit/logs/repo";
 
 # if works then add them
 touch ".legit/index/.status";              # git logs
+touch ".legit/index/.index";              # git logs
 
 echo "Initialized empty legit repository in .legit";

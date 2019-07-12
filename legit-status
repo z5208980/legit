@@ -28,6 +28,8 @@ snapshot="$repo/.snapshot.$commit_num";
 
 for i in `cat "$index/.status"`
 do
+    # this is when for a file that has been deleted and committed
+    [ ! -f $i ] && ontinue;
 
     main_sha="0";
     if [ -f "$i" ]; then
@@ -218,5 +220,3 @@ done
 # legit-show: error: 'a' not found in commit 3
 # $ legit-show 4:a
 # legit-show: error: unknown commit '4'
-
-
