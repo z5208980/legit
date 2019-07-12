@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
@@ -133,53 +133,52 @@ done
 # legit-status - untracked
 # z - same as repo
 
-$ legit-init
-Initialized empty legit repository in .legit
-$ echo 1 >a
-$ echo 2 >b
-$ echo 3 >c
-$ legit-add a b c
-$ legit-commit -m "first commit"
-Committed as commit 0
-$ echo 4 >>a
-$ echo 5 >>b
-$ echo 6 >>c
-$ echo 7 >d
-$ echo 8 >e
-$ legit-add b c d e
-$ echo 9 >b
-$ echo 0 >d
-$ legit-rm --cached a c
-$ legit-rm --force --cached b
-$ legit-rm --force --cached e
-$ legit-rm --force d
-$ legit-status
-a - untracked
-b - untracked
-c - untracked
-e - untracked
-
-$ legit-init
-Initialized empty legit repository in .legit
-$ touch a b c d e f g h
-$ legit-add a b c d e f
-$ legit-commit -m "first commit"
-Committed as commit 0
-$ echo hello >a
-$ echo hello >b
-$ echo hello >c
-$ legit-add a b
-$ echo world >a
-$ rm d
-$ legit-rm e
-$ legit-add g
-$ legit-status
-a - file changed, different changes staged for commit
-b - file changed, changes staged for commit
-c - file changed, changes not staged for commit
-d - file deleted
-e - deleted
-f - same as repo
-g - added to index
-h - untracked
-
+# legit-init
+# Initialized empty legit repository in .legit
+# echo 1 >a
+# echo 2 >b
+# echo 3 >c
+# legit-add a b c
+# legit-commit -m "first commit"
+# Committed as commit 0
+# echo 4 >>a
+# echo 5 >>b
+# echo 6 >>c
+# echo 7 >d
+# echo 8 >e
+# legit-add b c d e
+# echo 9 >b
+# echo 0 >d
+# ./legit-rm --cached a c
+# ./legit-rm --force --cached b
+# ./legit-rm --force --cached e
+# ./legit-rm --force d
+# ./legit-status
+# a - untracked
+# b - untracked
+# c - untracked
+# e - untracked
+#
+# $ legit-init
+# Initialized empty legit repository in .legit
+# $ touch a b c d e f g h
+# $ legit-add a b c d e f
+# $ legit-commit -m "first commit"
+# Committed as commit 0
+# $ echo hello >a
+# $ echo hello >b
+# $ echo hello >c
+# $ legit-add a b
+# $ echo world >a
+# $ rm d
+# $ legit-rm e
+# $ legit-add g
+# $ legit-status
+# a - file changed, different changes staged for commit
+# b - file changed, changes staged for commit
+# c - file changed, changes not staged for commit
+# d - file deleted
+# e - deleted
+# f - same as repo
+# g - added to index
+# h - untracked

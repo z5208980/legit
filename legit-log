@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 log='.legit/logs/HEAD';
 if [ ! -f $log ]; then

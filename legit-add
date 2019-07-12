@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
