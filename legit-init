@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 if [ $# -ne 0 ]; then
     echo "usage: legit-init"; exit 1;
@@ -16,5 +16,8 @@ mkdir ".legit/index";                  # staging file
 mkdir ".legit/logs";
 touch ".legit/logs/HEAD";              # git logs
 mkdir ".legit/logs/repo";
+
+# if works then add them
+touch ".legit/index/.status";              # git logs
 
 echo "Initialized empty legit repository in .legit";

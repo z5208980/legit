@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 cached="0";
 forced="0";
@@ -105,7 +105,7 @@ elif [ $forced -eq "1" ]; then
         # cat "$index/.index";
         # echo "$i";        
         # FOR LINUX
-        sed -i "/\/$i\$/d" "$index/.index"; # delete from status
+        sed -i "/\/$i\$/d" "$index/.index"; # delete from .index
         
         # FOR MAC
         # sed -i -e "/\/$i\$/d" "$index/.index"; # delete from status
@@ -126,6 +126,8 @@ else
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
+        # cat "$index/.index";
+        sed -i "/$i$/d" "$index/.index"; # delete from .index
         rm "$i";    # delete from HEAD
     done
 fi
@@ -147,4 +149,32 @@ fi
 # b - untracked
 # c - untracked
 # e - untracked
+
+# $ legit-init
+# Initialized empty legit repository in .legit
+# $ touch a b
+# $ legit-add a b
+# $ legit-commit -m "first commit"
+# Committed as commit 0
+# $ rm a
+# $ legit-commit -m "second commit"
+# nothing to commit
+# $ legit-add a
+# $ legit-commit -m "second commit"
+# Committed as commit 1
+# $ legit-rm --cached b
+# $ legit-commit -m "second commit"
+# Committed as commit 2
+# $ legit-rm b
+# legit-rm: error: 'b' is not in the legit repository
+# $ legit-add b
+# $ legit-rm b
+# legit-rm: error: 'b' has changes staged in the index
+# $ legit-commit -m "third commit"
+# Committed as commit 3
+# $ legit-rm b
+# $ legit-commit -m "fourth commit"
+# Committed as commit 4
+
+
 

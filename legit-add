@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
@@ -16,6 +16,21 @@ fi
 index='.legit/index';
 for i in $@
 do
+    if [ ! -f "$i" ] && [ "`grep -o "^$i\$" "$index/.status"`" ]; then
+        # file has been rmed so take out of .status and index
+        if [ -f "$index/.status" ]; then
+            sed -i "/\/$i\$/d" "$index/.status"; # delete from status
+        fi
+        if [ -f "$index/.index" ]; then
+            sed -i "/\/$i\$/d" "$index/.index"; # delete from index
+        fi
+        
+        if [ -f "$index/$i" ]; then
+            rm "$index/$i";
+        fi
+        continue;
+    fi
+    
     if echo "$i" | egrep -qv "^[a-zA-Z0-9.-_]"; then
         continue;
     fi
