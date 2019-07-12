@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 # TODO
 # catch err:
@@ -68,12 +68,7 @@ if [ -f "$index/.index" ]; then
     for i in `ls $index`
     do
         # echo "HERE";
-        if [ ! -f "$i" ]; then
-            # means file has been rm
-            continue;
-            # echo "no hash";
-            # exit 0;
-        fi
+        [ ! -f "$i" ] && continue;
 
         hash="`shasum $i | cut -d' ' -f1`";
 
@@ -102,7 +97,6 @@ fi
 #if [ -f "$index/.index" ]; then
 index_sha=`shasum "$index/.index" | cut -d' ' -f1`;
 # fi
-
 repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
 # echo $snapshot;
@@ -118,7 +112,6 @@ fi
 # fi
 
 # echo "$index_sha"; echo "$snap_sha"; exit 0;
-
 
 if [ "$commit_flag" -eq 0 ]; then
     echo "nothing to commit"; exit 1;

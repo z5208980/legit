@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 index='.legit/index';            # MAKE SURE TO CHANGE .git
 commit_num="0";                      # Get latest repo #
