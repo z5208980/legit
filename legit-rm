@@ -58,11 +58,11 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
         fi
 
         # FOR LINUX
-        # sed -i "/$i\$/d" "$index/.index"; # delete from status
+        sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        rm "$index/.index-e";
+        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
     done
 elif [ $cached -eq "1" ]; then
     # echo "HERE";
@@ -88,12 +88,12 @@ elif [ $cached -eq "1" ]; then
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ ! -n "$snap_sha" ] && snap_sha="0";
 
-        echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
+        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
 
         if [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
             echo "legit-rm: error: '$i' in index is different to both working file and repository";
             exit 1;
-        elif [ -z $snap_sha ] && [ -z $index_sha ]; then
+        elif [ "$snap_sha" == 0 ] && [ "$index_sha" == 0 ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
@@ -109,11 +109,11 @@ elif [ $cached -eq "1" ]; then
         # cat "$index/.index";
         # echo "$i";
         # FOR LINUX
-        # sed -i "/$i\$/d" "$index/.index"; # delete from status
+        sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        rm "$index/.index-e";
+        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
 
     done
 elif [ $forced -eq "1" ]; then
@@ -142,13 +142,14 @@ elif [ $forced -eq "1" ]; then
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
 
-        echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
+        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
 
-        if [ -z $snap_sha ] && [ -z $index_sha ]; then
+        if [ "$snap_sha" == 0 ] || [ ! -f "$index/$i" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
 
+        # exit 1;
         # exit 1;
         # echo "$i";
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
@@ -224,6 +225,7 @@ else
             # rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
+            exit 1;
         fi
 
         # cat "$index/.index";
@@ -233,8 +235,8 @@ else
         # rm "$index/.index-e";
         # ff583f99fcc0d5193258f78ea3531d50c0e5d71b  .legit/logs/repo/.snapshot.2/a
 
-        echo "deleting: $i | from: $i";
-        # rm "$i";    # delete from HEAD
+        # echo "deleting: $i | from: $i";
+        rm "$i";    # delete from HEAD
 
     done
 fi
