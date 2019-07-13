@@ -22,14 +22,11 @@ repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
 
 if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
-    # echo "--both";
     for i in "$@"
     do
-        # echo "$i";
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
         elif [ -f "$index/$i" ]; then
-            # echo "deleting: $i | from: $index/$i";
             rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
@@ -37,23 +34,19 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
 
         # FOR LINUX
         # sed -i "/$i\$/d" "$index/.index"; # delete from status
-        
-        if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
-            echo "$i" >> "$index/.status";  # useful for deleted files
-        fi
-        # cat "$index/.status";
 
         # FOR MAC
         # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
         # rm "$index/.index-e";
+        
+        if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
+            echo "$i" >> "$index/.status";
+        fi
     done
 elif [ $cached -eq "1" ]; then
-    # echo "HERE";
     for i in "$@"
     do
-        if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
-            continue;
-        fi
+        [ "$i" = "--cached" ] || [ "$i" = "--force" ] && continue;
 
         main_sha="0";
         [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
@@ -71,10 +64,8 @@ elif [ $cached -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
-        # exit 1;
 
         if [ -f "$index/$i" ]; then
-            # echo "deleting: $i | from: $index/$i";
             rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
@@ -91,9 +82,7 @@ elif [ $cached -eq "1" ]; then
 elif [ $forced -eq "1" ]; then
     for i in "$@"
     do
-        if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
-            continue;
-        fi
+        [ "$i" = "--cached" ] || [ "$i" = "--force" ] && continue;
 
         main_sha="0";
         [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
@@ -104,35 +93,25 @@ elif [ $forced -eq "1" ]; then
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
 
-        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
-        
         if [ ! -f "$index/$i" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
         
-        # exit 1;
-        
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
         elif [ -f "$index/$i" ]; then
-            # echo "deleting: $i | from: $index/$i";
             rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
 
-        if [ -f "$i" ]; then
-            rm "$i";    # delete from HEAD
-        fi
+        [ -f "$i" ] && rm "$i";     # delete from HEAD
 
-        ####  update .status  ####
         if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
             echo "$i" >> "$index/.status";  # useful for deleted files
         fi
-        # cat "$index/.status";
-        # cat "$index/.index";
-        # echo "$i";
+        
         # FOR LINUX
         # sed -i "/\/$i\$/d" "$index/.index"; # delete from .index
 
@@ -141,7 +120,6 @@ elif [ $forced -eq "1" ]; then
         # rm "$index/.index-e";
     done
 else
-    # echo "This deletes from main and index --> makes it deleted";
     for i in "$@"
     do
         main_sha="0";
@@ -172,29 +150,22 @@ else
         fi
 
         if [ -f "$index/$i" ]; then     # delete from index
-            # echo "deleting: $index/$i | from: $index/$i";
             rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
         
-        ####  update .status  ####
         if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
             echo "$i" >> "$index/.status";  # useful for deleted files
         fi
-        # cat "$index/.status";
 
-        # cat "$index/.index";
         # sed -i "/$i\$/d" "$index/.index"; # delete from .index
 
         # sed -i -e "/$i$/d" "$index/.index"; # delete from status
         # rm "$index/.index-e";
-        # ff583f99fcc0d5193258f78ea3531d50c0e5d71b  .legit/logs/repo/.snapshot.2/a
 
-        # echo "deleting: $i | from: $i";
         rm "$i";    # delete from HEAD
-
     done
 fi
 
