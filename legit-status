@@ -14,10 +14,10 @@ snapshot="$repo/.snapshot.$commit_num";
 for i in `cat "$index/.status"`
 do
     main_sha="0";
-    [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
+    [ -f "$i" ] && main_sha=`sha1sum $i | cut -d' ' -f1`;
 
     index_sha="0";
-    [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+    [ -f "$index/$i" ] && index_sha=`sha1sum "$index/$i" | cut -d' ' -f1`;
 
     snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
     [ -z "$snap_sha" ] && snap_sha="0";

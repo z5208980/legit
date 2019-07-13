@@ -40,7 +40,7 @@ do
         if [ "`grep "\/*$i\$" "$index/.index"`" ]; then
             # update hash in .index
             index_sha="`grep "$i$" "$index/.index" | cut -d' ' -f1`";
-            main_sha="`shasum "$i" | cut -d' ' -f1`";
+            main_sha="`sha1sum "$i" | cut -d' ' -f1`";
             
             if [ "$main_sha" != "$index_sha" ]; then
                 # LINUX
@@ -48,7 +48,7 @@ do
                 # MAC
                 # sed -i -e "/$index_sha/d" "$index/.index";
                 # rm "$index/.index-e";
-                echo "`shasum $i`" >> "$index/.index";
+                echo "`sha1sum $i`" >> "$index/.index";
             fi
         fi
 
