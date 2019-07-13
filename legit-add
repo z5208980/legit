@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/bash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
@@ -9,7 +9,7 @@ if [ $# -eq 0 ]; then
 fi
 
 if ! [ -d ".legit" ]; then
-    echo "legit-add: error: no .legit directory containing legit repository exists";    
+    echo "legit-add: error: no .legit directory containing legit repository exists";
     exit 1;
 fi
 
@@ -21,7 +21,7 @@ do
         if [ -f "$index/.status" ]; then
             sed -i "/\/$i$/d" "$index/.status"; # delete from status
         fi
-        
+
         if [ -f "$index/.index" ]; then
             sed -i "/\/$i$/d" "$index/.index";  # delete from index
         fi
@@ -40,15 +40,15 @@ do
         if [ "`grep "\/*$i\$" "$index/.index"`" ]; then
             # update hash in .index
             index_sha="`grep "$i$" "$index/.index" | cut -d' ' -f1`";
-            main_sha="`sha1sum "$i" | cut -d' ' -f1`";
-            
+            main_sha="`shasum "$i" | cut -d' ' -f1`";
+
             if [ "$main_sha" != "$index_sha" ]; then
                 # LINUX
-                sed -i "/$index_sha/d" "$index/.index";
+                # sed -i "/$index_sha/d" "$index/.index";
                 # MAC
-                # sed -i -e "/$index_sha/d" "$index/.index";
-                # rm "$index/.index-e";
-                echo "`sha1sum $i`" >> "$index/.index";
+                sed -i -e "/$index_sha/d" "$index/.index";
+                rm "$index/.index-e";
+                echo "`shasum $i`" >> "$index/.index";
             fi
         fi
 

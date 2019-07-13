@@ -1,4 +1,14 @@
-#!/bin/dash
+#!/bin/bash
+
+if [ ! -d '.legit' ]; then
+    echo "legit-rm: error: no .legit directory containing legit repository exists";
+    exit 1;
+fi
+
+if [ ! -d '.legit/logs/repo/.snapshot.0' ]; then
+    echo "legit-rm: error: your repository doesn't have any commits yet";
+    exit 1;
+fi
 
 cached="0";
 forced="0";
@@ -11,6 +21,14 @@ done
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
     exit 1;
+fi
+if [ "$#" -gt 1 ]; then
+    if echo "$1" | egrep -q "^--"; then
+        if [ "$cached" = "0" ] && [ "$forced" = "0" ]; then
+            echo "usage: legit-rm [--force] [--cached] <filenames>"
+            exit 1;
+        fi
+    fi
 fi
 
 index='.legit/index';
@@ -38,7 +56,7 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
         # FOR MAC
         # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
         # rm "$index/.index-e";
-        
+
         if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
             echo "$i" >> "$index/.status";
         fi
@@ -49,10 +67,10 @@ elif [ $cached -eq "1" ]; then
         [ "$i" = "--cached" ] || [ "$i" = "--force" ] && continue;
 
         main_sha="0";
-        [ -f "$i" ] && main_sha=`sha1sum $i | cut -d' ' -f1`;
+        [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
         index_sha="0";
-        [ -f "$index/$i" ] && index_sha=`sha1sum "$index/$i" | cut -d' ' -f1`;
+        [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
 
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ ! -n "$snap_sha" ] && snap_sha="0";
@@ -72,11 +90,11 @@ elif [ $cached -eq "1" ]; then
         fi
 
         # FOR LINUX
-        sed -i "/$i\$/d" "$index/.index"; # delete from status
+        # sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        # rm "$index/.index-e";
+        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        rm "$index/.index-e";
 
     done
 elif [ $forced -eq "1" ]; then
@@ -85,10 +103,10 @@ elif [ $forced -eq "1" ]; then
         [ "$i" = "--cached" ] || [ "$i" = "--force" ] && continue;
 
         main_sha="0";
-        [ -f "$i" ] && main_sha=`sha1sum $i | cut -d' ' -f1`;
+        [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
         index_sha="0";
-        [ -f "$index/$i" ] && index_sha=`sha1sum "$index/$i" | cut -d' ' -f1`;
+        [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
 
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
@@ -97,7 +115,7 @@ elif [ $forced -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
-        
+
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
         elif [ -f "$index/$i" ]; then
@@ -111,7 +129,7 @@ elif [ $forced -eq "1" ]; then
         if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
             echo "$i" >> "$index/.status";  # useful for deleted files
         fi
-        
+
         # FOR LINUX
         # sed -i "/\/$i\$/d" "$index/.index"; # delete from .index
 
@@ -123,10 +141,10 @@ else
     for i in "$@"
     do
         main_sha="0";
-        [ -f "$i" ] && main_sha=`sha1sum $i | cut -d' ' -f1`;
+        [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
         index_sha="0";
-        [ -f "$index/$i" ] && index_sha=`sha1sum "$index/$i" | cut -d' ' -f1`;
+        [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
 
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
@@ -155,7 +173,7 @@ else
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
-        
+
         if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
             echo "$i" >> "$index/.status";  # useful for deleted files
         fi
@@ -168,5 +186,3 @@ else
         rm "$i";    # delete from HEAD
     done
 fi
-
-

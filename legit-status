@@ -1,6 +1,16 @@
-#!/bin/dash
+#!/bin/bash
 
-index='.legit/index';                  
+if [ ! -d '.legit' ]; then
+    echo "legit-status: error: no .legit directory containing legit repository exists";
+    exit 1;
+fi
+
+if [ ! -d '.legit/logs/repo/.snapshot.0' ]; then
+    echo "legit-status: error: your repository doesn't have any commits yet";
+    exit 1;
+fi
+
+index='.legit/index';
 commit_num="0";                      # Get latest repo #
 msg_file='.legit/COMMIT_EDITMSG';
 
@@ -14,10 +24,10 @@ snapshot="$repo/.snapshot.$commit_num";
 for i in `cat "$index/.status"`
 do
     main_sha="0";
-    [ -f "$i" ] && main_sha=`sha1sum $i | cut -d' ' -f1`;
+    [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
     index_sha="0";
-    [ -f "$index/$i" ] && index_sha=`sha1sum "$index/$i" | cut -d' ' -f1`;
+    [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
 
     snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
     [ -z "$snap_sha" ] && snap_sha="0";
@@ -26,7 +36,7 @@ do
     if [ "$main_sha" = "0" ] && [ "$index_sha" = "0" ] && [ "$snap_sha" = "0" ]; then
         continue;
     fi
-    
+
     if   [ "$main_sha" != "0" ] && [ "$index_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
         echo "$i - file changed, different changes staged for commit";
     elif [ "$main_sha" != "0" ] && [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
