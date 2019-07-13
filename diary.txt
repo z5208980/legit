@@ -33,6 +33,6 @@
 |          |       |       |           | legit-rm to pass autotest                    |
 |          |       |       |           | completed test01.sh, checks commits and logs |
 +----------+-------+-------+-----------+----------------------------------------------+
-| 13/07/19 | 12:45 | 4:00  | coding    | passed subset[0,1] autotest                  |
+| 13/07/19 | 12:45 | 4:30  | coding    | passed subset[0,1] autotest                  |
 |          |       |       |           | added comments to code and tidy code         |
 +----------+-------+-------+-----------+----------------------------------------------+
