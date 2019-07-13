@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 if [ $# -ne 0 ]; then
     echo "usage: legit-init"; exit 1;
@@ -9,16 +9,17 @@ if [ -d ".legit" ]; then
     exit 1;
 fi
 
-
 mkdir ".legit";
-touch ".legit/COMMIT_EDITMSG";         # latest commit msg stored here
-mkdir ".legit/index";                  # staging file
-mkdir ".legit/logs";
-touch ".legit/logs/HEAD";              # git logs
-mkdir ".legit/logs/repo";
+touch ".legit/COMMIT_EDITMSG";      # -f    stores lastest commit msg
 
-# if works then add them
-touch ".legit/index/.status";              # git logs
-touch ".legit/index/.index";              # git logs
+index='.legit/index';
+mkdir "$index";               # -d    staging directory
+touch "$index/.status";       # -f    stores every file created
+touch "$index/.index";        # -f    stores files for commit
+
+logs='.legit/logs';
+mkdir "$logs";                # -d    repo directory
+touch "$logs/HEAD";           # -f    legit logs
+mkdir "$logs/repo";           # -d    stores repos of commits   
 
 echo "Initialized empty legit repository in .legit";

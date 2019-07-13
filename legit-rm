@@ -1,50 +1,28 @@
-#!/bin/bash
+#!/bin/dash
 
 cached="0";
 forced="0";
 for i in "$@"
 do
-    # echo "$i";
-    if [ "$i" =  "--cached" ]; then
-        # echo "-a";
-        cached="1";
-    elif [ "$i" = "--force" ]; then
-        # echo "-m";
-        forced="1";
-    #     #file
-
-    fi
+    [ "$i" =  "--cached" ] && cached="1";
+    [ "$i" = "--force" ] && forced="1";
 done
-# echo "$cached"; echo "$forced";
 
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
-    exit 0;
+    exit 1;
 fi
-#if [ "$cached" -eq 0 ] && [ "$forced" -eq 0 ]; then
-#    echo "usage: legit-rm [--force] [--cached] <filenames>"
-#    exit 0;
-#fi
-
-#echo "index";
-#for i in `ls $index`
-#do
-#    echo "$i";
-#done
 
 index='.legit/index';
 commit_num="0";                      # Get latest repo #
 msg_file='.legit/COMMIT_EDITMSG';
-# if [ -s $msg_file ]; then            # Not Empty
-#      commit_num=`cut -d' ' -f1 $msg_file`;
-# fi
 [ -s $msg_file ] && commit_num=`cut -d' ' -f1 $msg_file`;
 
 repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
 
 if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
-    echo "--both";
+    # echo "--both";
     for i in "$@"
     do
         # echo "$i";
@@ -58,7 +36,12 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
         fi
 
         # FOR LINUX
-        sed -i "/$i\$/d" "$index/.index"; # delete from status
+        # sed -i "/$i\$/d" "$index/.index"; # delete from status
+        
+        if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
+            echo "$i" >> "$index/.status";  # useful for deleted files
+        fi
+        # cat "$index/.status";
 
         # FOR MAC
         # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
@@ -66,13 +49,6 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
     done
 elif [ $cached -eq "1" ]; then
     # echo "HERE";
-    # ./legit-rm --cached a
-    # ./legit-rm --cached b
-    # # legit-rm: error: 'b' in index is different to both working file and repository
-    # ./legit-rm --cached c
-    # ./legit-rm --cached d
-    # ./legit-rm --cached e
-    # # legit-rm: error: 'e' is not in the legit repository
     for i in "$@"
     do
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
@@ -88,12 +64,10 @@ elif [ $cached -eq "1" ]; then
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ ! -n "$snap_sha" ] && snap_sha="0";
 
-        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
-
         if [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
             echo "legit-rm: error: '$i' in index is different to both working file and repository";
             exit 1;
-        elif [ "$snap_sha" == 0 ] && [ "$index_sha" == 0 ]; then
+        elif [ "$snap_sha" = 0 ] && [ "$index_sha" = 0 ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
@@ -106,8 +80,6 @@ elif [ $cached -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
 
-        # cat "$index/.index";
-        # echo "$i";
         # FOR LINUX
         sed -i "/$i\$/d" "$index/.index"; # delete from status
 
@@ -117,16 +89,6 @@ elif [ $cached -eq "1" ]; then
 
     done
 elif [ $forced -eq "1" ]; then
-    # echo "HERE";
-    # ./legit-rm --force a
-    # # legit-rm: error: 'a' is not in the legit repository
-    # ./legit-rm --force b
-    # ./legit-rm --force c
-    # # legit-rm: error: 'c' is not in the legit repository
-    # ./legit-rm --force d
-    # # legit-rm: error: 'd' is not in the legit repository
-    # ./legit-rm --force e
-    # # legit-rm: error: 'e' is not in the legit repository
     for i in "$@"
     do
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
@@ -143,15 +105,14 @@ elif [ $forced -eq "1" ]; then
         [ -z "$snap_sha" ] && snap_sha="0";
 
         # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
-
-        if [ "$snap_sha" == 0 ] || [ ! -f "$index/$i" ]; then
+        
+        if [ ! -f "$index/$i" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
-
+        
         # exit 1;
-        # exit 1;
-        # echo "$i";
+        
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
         elif [ -f "$index/$i" ]; then
@@ -165,6 +126,11 @@ elif [ $forced -eq "1" ]; then
             rm "$i";    # delete from HEAD
         fi
 
+        ####  update .status  ####
+        if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
+            echo "$i" >> "$index/.status";  # useful for deleted files
+        fi
+        # cat "$index/.status";
         # cat "$index/.index";
         # echo "$i";
         # FOR LINUX
@@ -179,24 +145,13 @@ else
     for i in "$@"
     do
         main_sha="0";
-        # if [ -f "$i" ]; then
-        #     main_sha=`shasum $i | cut -d' ' -f1`;
-        # fi
         [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
         index_sha="0";
-        # if [ -f "$index/$i" ]; then
-        #     index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
-        # fi
         [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
 
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
-        # if [ ! -n "$snap_sha" ]; then
-        #     snap_sha="0";
-        # fi
         [ -z "$snap_sha" ] && snap_sha="0";
-
-        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
 
         if [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
             echo "legit-rm: error: '$i' in index is different to both working file and repository";
@@ -204,9 +159,6 @@ else
         elif [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "0" ]; then
             echo "legit-rm: error: '$i' in repository is different to working file";
             exit 1;
-        # elif [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
-        #     echo "legit-rm: error: '$i' in index is different to both working file and repository";
-        #     exit 1;
         elif [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
             echo "legit-rm: error: '$i' has changes staged in the index";
             exit 1;
@@ -215,18 +167,23 @@ else
             exit 1;
         fi
 
-        # echo "$i";
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then
             continue;
         fi
 
         if [ -f "$index/$i" ]; then     # delete from index
-            echo "deleting: $index/$i | from: $index/$i";
-            # rm "$index/$i";
+            # echo "deleting: $index/$i | from: $index/$i";
+            rm "$index/$i";
         else
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
         fi
+        
+        ####  update .status  ####
+        if [ ! "`grep -o "^$i\$" "$index/.status"`" ]; then
+            echo "$i" >> "$index/.status";  # useful for deleted files
+        fi
+        # cat "$index/.status";
 
         # cat "$index/.index";
         # sed -i "/$i\$/d" "$index/.index"; # delete from .index
@@ -241,88 +198,4 @@ else
     done
 fi
 
-# $ echo 4 >>a
-# $ echo 5 >>b
-# $ echo 6 >>c
-# $ echo 7 >d
-# $ echo 8 >e
-# $ legit-add b c d e
-# $ echo 9 >b
-# $ echo 0 >d
-# $ legit-rm --cached a c
-# $ legit-rm --force --cached b
-# $ legit-rm --force --cached e
-# $ legit-rm --force d
-# $ legit-status
-# a - untracked
-# b - untracked
-# c - untracked
-# e - untracked
 
-# $ legit-init
-# Initialized empty legit repository in .legit
-# $ touch a b
-# $ legit-add a b
-# $ legit-commit -m "first commit"
-# Committed as commit 0
-# $ rm a
-# $ legit-commit -m "second commit"
-# nothing to commit
-# $ legit-add a
-# $ legit-commit -m "second commit"
-# Committed as commit 1
-# $ legit-rm --cached b
-# $ legit-commit -m "second commit"
-# Committed as commit 2
-# $ legit-rm b
-# legit-rm: error: 'b' is not in the legit repository
-# $ legit-add b
-# $ legit-rm b
-# legit-rm: error: 'b' has changes staged in the index
-# $ legit-commit -m "third commit"
-# Committed as commit 3
-# $ legit-rm b
-# $ legit-commit -m "fourth commit"
-# Committed as commit 4
-
-# ./legit-init
-# # Initialized empty legit repository in .legit
-# echo 1 >a
-# echo 2 >b
-# echo 3 >c
-# ./legit-add a b c
-# ./legit-commit -m "first commit"
-# # Committed as commit 0
-# echo 4 >>a
-# echo 5 >>b
-# echo 6 >>c
-# echo 7 >d
-# echo 8 >e
-# ./legit-add b c d
-# echo 9 >b
-# ./legit-rm a
-# # legit-rm: error: 'a' in repository is different to working file
-# ./legit-rm b
-# # legit-rm: error: 'b' in index is different to both working file and repository
-# ./legit-rm c
-# # legit-rm: error: 'c' has changes staged in the index
-# ./legit-rm d
-# # legit-rm: error: 'd' has changes staged in the index
-# ./legit-rm e
-# # legit-rm: error: 'e' is not in the legit repository
-# ./legit-rm --cached a
-# ./legit-rm --cached b
-# # legit-rm: error: 'b' in index is different to both working file and repository
-# ./legit-rm --cached c
-# ./legit-rm --cached d
-# ./legit-rm --cached e
-# # legit-rm: error: 'e' is not in the legit repository
-# ./legit-rm --force a
-# # legit-rm: error: 'a' is not in the legit repository
-# ./legit-rm --force b
-# ./legit-rm --force c
-# # legit-rm: error: 'c' is not in the legit repository
-# ./legit-rm --force d
-# # legit-rm: error: 'd' is not in the legit repository
-# ./legit-rm --force e
-# # legit-rm: error: 'e' is not in the legit repository

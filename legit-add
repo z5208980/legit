@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 # TODO
     # contain alpha-numeric characters plus '.', '-' and '_' characters.
@@ -9,7 +9,7 @@ if [ $# -eq 0 ]; then
 fi
 
 if ! [ -d ".legit" ]; then
-    echo "legit-add: error: no .legit directory containing legit repository exists";    # not $0
+    echo "legit-add: error: no .legit directory containing legit repository exists";    
     exit 1;
 fi
 
@@ -21,8 +21,9 @@ do
         if [ -f "$index/.status" ]; then
             sed -i "/\/$i$/d" "$index/.status"; # delete from status
         fi
+        
         if [ -f "$index/.index" ]; then
-            sed -i "/\/$i$/d" "$index/.index"; # delete from index
+            sed -i "/\/$i$/d" "$index/.index";  # delete from index
         fi
 
         if [ -f "$index/$i" ]; then
@@ -36,31 +37,24 @@ do
     fi
 
     if [ -f "$i" ]; then
-        # cat "$index/.index";
-
-        # MIGHT WANT TO CHANGE GREP: [IT WORKS BUT NOT THE BEST]
         if [ "`grep "\/*$i\$" "$index/.index"`" ]; then
-            # replace="`grep -o "\/*$i\$" "$index/.index"`";
-            # echo $replace;
-            # echo "HERE";
-            # update hashes in .index
+            # update hash in .index
             index_sha="`grep "$i$" "$index/.index" | cut -d' ' -f1`";
-            main_sha="`shasum "$i" | cut -d' ' -f1`";       # update hashes
-            # echo $index_sha; echo $main_sha;
-            # [ "$main_sha" != "$index_sha" ] && echo "`shasum $i`" >> "$index/.index";       # update hashes
-            # [ "$main_sha" != "$index_sha" ] && sed -i s/"$replace"/"`shasum "$i"`"/ "$index/.index";
+            main_sha="`shasum "$i" | cut -d' ' -f1`";
+            
             if [ "$main_sha" != "$index_sha" ]; then
-                # sed -i -e "s/"$replace"/"`shasum "$i"`"/" "$index/.index";
-                sed -i -e "/$index_sha/d" "$index/.index";
+                # LINUX
+                sed -i "/$index_sha/d" "$index/.index";
+                # MAC
+                # sed -i -e "/$index_sha/d" "$index/.index";
+                # rm "$index/.index-e";
                 echo "`shasum $i`" >> "$index/.index";
-                rm "$index/.index-e";
             fi
         fi
 
-        # move to index
         cp "$i" "$index/$i"
     else
         echo "legit-add: error: can not open '$i'";
-        exit 1;     # TODO: delete if fail autotest
+        exit 1;
     fi
 done

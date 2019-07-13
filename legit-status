@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/dash
 
-index='.legit/index';            # MAKE SURE TO CHANGE .git
+index='.legit/index';                  
 commit_num="0";                      # Get latest repo #
 msg_file='.legit/COMMIT_EDITMSG';
 if [ -s $msg_file ]; then            # Not Empty
@@ -9,49 +9,29 @@ fi
 repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
 
-# echo $snapshot;
-# for i in `ls $snapshot`
-# do
-#     echo "$i";
-# done
-#
-# # index_files=`cut -d' ' -f2 "$index/.index"`;
-# echo "$index";
-# echo "`cut -d' ' -f1 "$index/.index"`";
-# echo "$snapshot";
-
-# cat "$index/.index";
-# for i in `cat "$index/.status"`
-# do
-# done
-# exit 0;
-
 for i in `cat "$index/.status"`
 do
     # this is when for a file that has been deleted and committed
-    [ ! -f $i ] && ontinue;
+    #if [ ! -f $i ] && [ ! -f "$index/$i" ]; then
+    #    continue;
+    # sfi 
 
     main_sha="0";
-    if [ -f "$i" ]; then
-        main_sha=`shasum $i | cut -d' ' -f1`;
-    fi
+    [ -f "$i" ] && main_sha=`shasum $i | cut -d' ' -f1`;
 
     index_sha="0";
-    if [ -f "$index/$i" ]; then
-        index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+    [ -f "$index/$i" ] && index_sha=`shasum "$index/$i" | cut -d' ' -f1`;
+
+    snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
+    [ -z "$snap_sha" ] && snap_sha="0";
+
+    # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
+    
+    if [ "$main_sha" = "0" ] && [ "$index_sha" = "0" ] && [ "$snap_sha" = "0" ]; then
+        continue;
     fi
-
-    # echo "$i";
-    snap_sha="`grep "$i\$" "$snapshot/.index" | cut -d' ' -f1`";
-    if [ ! -n "$snap_sha" ]; then
-        snap_sha="0";
-    fi
-
-    # echo "main: $main_sha";
-    # echo "index: $index_sha";
-    # echo "repo: $snap_sha";
-
-    if   [ "$main_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
+    
+    if   [ "$main_sha" != "0" ] && [ "$index_sha" != "0" ] && [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
         echo "$i - file changed, different changes staged for commit";
     elif [ "$main_sha" != "0" ] && [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - file changed, changes staged for commit";
@@ -65,7 +45,9 @@ do
         echo "$i - same as repo";
     elif [ "$main_sha" = "$index_sha" ] && [ "$snap_sha" = "0" ]; then
         echo "$i - added to index";
-    else
+    elif [ "$main_sha" != "0" ] && [ "$index_sha" = "0" ] && [ "$snap_sha" = "0" ]; then
+        echo "$i - untracked";
+    elif [ "$main_sha" != "0" ] && [ "$index_sha" = "0" ] && [ "$snap_sha" != "0" ]; then
         echo "$i - untracked";
     fi
 
@@ -119,104 +101,3 @@ done
 #
 # done
 
-# b - same as repo
-# c - same as repo
-# d - file deleted
-# diary.txt - untracked
-# f - file changed, different changes staged for commit
-# g - same as repo
-# h - untracked
-# legit-add - untracked
-# legit-commit - untracked
-# legit-init - untracked
-# legit-log - untracked
-# legit-rm - untracked
-# legit-show - untracked
-# legit-status - untracked
-# z - same as repo
-
-# legit-init
-# Initialized empty legit repository in .legit
-# echo 1 >a
-# echo 2 >b
-# echo 3 >c
-# legit-add a b c
-# legit-commit -m "first commit"
-# Committed as commit 0
-# echo 4 >>a
-# echo 5 >>b
-# echo 6 >>c
-# echo 7 >d
-# echo 8 >e
-# legit-add b c d e
-# echo 9 >b
-# echo 0 >d
-# ./legit-rm --cached a c
-# ./legit-rm --force --cached b
-# ./legit-rm --force --cached e
-# ./legit-rm --force d
-# ./legit-status
-# a - untracked
-# b - untracked
-# c - untracked
-# e - untracked
-#
-# $ legit-init
-# Initialized empty legit repository in .legit
-# $ touch a b c d e f g h
-# $ legit-add a b c d e f
-# $ legit-commit -m "first commit"
-# Committed as commit 0
-# $ echo hello >a
-# $ echo hello >b
-# $ echo hello >c
-# $ legit-add a b
-# $ echo world >a
-# $ rm d
-# $ legit-rm e
-# $ legit-add g
-# $ legit-status
-# a - file changed, different changes staged for commit
-# b - file changed, changes staged for commit
-# c - file changed, changes not staged for commit
-# d - file deleted
-# e - deleted
-# f - same as repo
-# g - added to index
-# h - untracked
-
-# $ legit-init
-# Initialized empty legit repository in .legit
-# $ echo hello >a
-# $ legit-add a
-# $ legit-commit -m commit-0
-# Committed as commit 0
-# $ legit-rm a
-# $ legit-status
-# a - deleted
-# $ legit-commit -m commit-1
-# Committed as commit 1
-# $ legit-status
-# $ echo world >a
-# $ legit-status
-# a - untracked
-# $ legit-commit -m commit-2
-# nothing to commit
-# $ legit-add a
-# $ legit-commit -m commit-2
-# Committed as commit 2
-# $ legit-rm a
-# $ legit-commit -m commit-3
-# Committed as commit 3
-# $ legit-show :a
-# legit-show: error: 'a' not found in index
-# $ legit-show 0:a
-# hello
-# $ legit-show 1:a
-# legit-show: error: 'a' not found in commit 1
-# $ legit-show 2:a
-# world
-# $ legit-show 3:a
-# legit-show: error: 'a' not found in commit 3
-# $ legit-show 4:a
-# legit-show: error: unknown commit '4'
