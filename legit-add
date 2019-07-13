@@ -44,10 +44,10 @@ do
 
             if [ "$main_sha" != "$index_sha" ]; then
                 # LINUX
-                # sed -i "/$index_sha/d" "$index/.index";
+                sed -i "/$index_sha/d" "$index/.index";
                 # MAC
-                sed -i -e "/$index_sha/d" "$index/.index";
-                rm "$index/.index-e";
+                # sed -i -e "/$index_sha/d" "$index/.index";
+                # rm "$index/.index-e";
                 echo "`shasum $i`" >> "$index/.index";
             fi
         fi
