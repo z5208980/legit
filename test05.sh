@@ -1,8 +1,9 @@
 #!/bin/bash
 rm -rf .legit;
 
-#
-#
+# Test legit-commit behaviour when changes are made in the current directory,
+#       and that those files are not added to the index. Also test for the restoration of file
+# legit-commit, legit-rm
 
 ./legit-init
 echo a >a;

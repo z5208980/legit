@@ -5,11 +5,6 @@ if [ ! -d '.legit' ]; then
     exit 1;
 fi
 
-if [ ! -d '.legit/logs/repo/.snapshot.0' ]; then
-    echo "legit-rm: error: your repository doesn't have any commits yet";
-    exit 1;
-fi
-
 cached="0";
 forced="0";
 for i in "$@"
@@ -38,6 +33,21 @@ msg_file='.legit/COMMIT_EDITMSG';
 
 repo='.legit/logs/repo';
 snapshot="$repo/.snapshot.$commit_num";
+
+if [ ! -d '.legit/logs/repo/.snapshot.0' ]; then
+    # echo "$cached $forced";
+    if [ "$cached" = "1" ]; then
+        if [ -f "$index/$i" ]; then
+            rm "$index/$i";
+        else
+            echo "legit-rm: error: '$i' is not in the legit repository";
+        fi
+        exit 1;
+    else
+        echo "legit-rm: error: your repository doesn't have any commits yet";
+        exit 1;
+    fi
+fi
 
 if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
     for i in "$@"

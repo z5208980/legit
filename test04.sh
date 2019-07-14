@@ -1,5 +1,4 @@
 #!/bin/bash
-rm -rf .legit
 
 # Test errors that will occurs in legit-rm and how to solve them
 # legit-rm, legit-show

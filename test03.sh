@@ -1,5 +1,4 @@
 #!/bin/bash
-rm -rf .legit
 
 # Test the status the stages in legit-rm and adding content into file in the same
 #   filename with legit-status. Then showing the content of the files with legit-show

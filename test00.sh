@@ -1,5 +1,4 @@
 #!/bin/bash
-rm -rf .legit;
 
 # Edge cases, argument testing and basic error handling tests
 # legit-init, legit-add, legit-commit, legit-log, legit-show

@@ -1,5 +1,4 @@
 #!/bin/bash
-rm -rf .legit;
 
 # add + commit + comparing logs and repo to the expected results
 # legit-add, legit-commit, legit-log, legit-show
