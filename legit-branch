@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+use File::Copy;
+use File::Path;
+
+if (! -d ".legit/logs/repo/.snapshot.0") {
+    die "legit-branch: error: your repository does not have any commits yet\n";
+}
+
+
+$branch = '.legit/branches';
+if (@ARGV == 0) {
+    my @filess=glob "$branch/*";
+    for my $file (@filess) {
+        $file =~ s/$branch\///;
+        print "$file\n";
+    }
+} elsif ("$ARGV[0]" eq "-d") {
+    $directory = "$branch/$ARGV[1]";
+    
+    if ("$ARGV[1]" eq "master") {
+        die "legit-branch: error: can not delete branch '$ARGV[1]'\n";
+    }
+    if (! -d "$directory") {
+        die "legit-branch: error: branch '$ARGV[1]' does not exist\n";
+    }
+
+
+    rmtree $directory;
+    print "Deleted branch '$ARGV[1]'\n";
+} else {
+    $directory = "$branch/$ARGV[0]";
+
+    if (-d "$directory") {
+        die "legit-branch: error: branch '$ARGV[0]' already exists\n";
+    }
+    
+    mkdir $directory;
+    
+    my @filess=glob "*";
+    for my $file (@filess) {
+        copy("$file","$directory/$file") or die "Copy failed";
+    }
+}
+

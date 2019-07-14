@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+use File::Copy;
+
+die "usage: legit-checkout <branch>\n" if @ARGV != 1;
+
+$branch = '.legit/branches';
+if (-d "$branch/$ARGV[0]") {
+    my @files=glob "*";
+    for my $file (@files) {
+        print "$file\n";
+        copy("$file","$branch/.tmp/$file") or die "Copy failed";
+        unlink $file
+    }
+    
+    chdir ("$branch/$ARGV[0]");
+    my @files=glob "*";
+    for my $file (@files) {
+        print "$file\n";
+        copy("$file","../../../$file") or die "Copy failed";
+        unlink $file;
+    }
+    
+    chdir ("../../../$branch/.tmp");
+    my @files=glob "*";
+    for my $file (@files) {
+        print "$file\n";
+        copy("$branch/.tmp/$file", "$branch/$ARGV[0]/$file") or die "Copy failed";
+        # unlink $file;
+    }
+} else {
+    die "branch doesn't exist\n";
+}
+

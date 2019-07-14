@@ -7,11 +7,11 @@ fi
 
 cached="0";
 forced="0";
-# for i in "$@"
-# do
-[ "$1" =  "--cached" ] && cached="1";
-[ "$1" = "--force" ] && forced="1";
-# done
+for i in "$@"
+do
+    [ "$i" =  "--cached" ] && cached="1";
+    [ "$i" = "--force" ] && forced="1";
+done
 
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
@@ -24,8 +24,6 @@ if [ "$#" -gt 1 ]; then
             exit 1
         fi
     fi
-    echo "usage: legit-rm [--force] [--cached] <filenames>"
-    exit 1;
 fi
 
 index='.legit/index';
@@ -62,6 +60,7 @@ if [ $cached -eq "1" ] && [ $forced -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
 
+        # [ -f "$i" ] && rm "$i";     # delete from HEAD
         # FOR LINUX
         # sed -i "/$i\$/d" "$index/.index"; # delete from status
 
@@ -101,6 +100,7 @@ elif [ $cached -eq "1" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
         fi
 
+        # [ -f "$i" ] && rm "$i";     # delete from HEAD
         # FOR LINUX
         sed -i "/$i\$/d" "$index/.index"; # delete from status
 
@@ -122,6 +122,11 @@ elif [ $forced -eq "1" ]; then
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
 
+        if [ $main_sha = "0" ] || [ $index_sha = "0" ]; then
+            echo "legit-rm: error: '$i' is not in the legit repository";
+            exit 1;
+        fi
+        
         if [ ! -f "$index/$i" ]; then
             echo "legit-rm: error: '$i' is not in the legit repository";
             exit 1;
@@ -159,6 +164,13 @@ else
 
         snap_sha="`grep "$i$" "$snapshot/.index" | cut -d' ' -f1`";
         [ -z "$snap_sha" ] && snap_sha="0";
+        
+        # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
+        
+        if [ $main_sha = "0" ] || [ $index_sha = "0" ]; then
+            echo "legit-rm: error: '$i' is not in the legit repository";
+            exit 1;
+        fi
 
         if [ "$main_sha" != "$index_sha" ] && [ "$index_sha" != "$snap_sha" ] && [ "$snap_sha" != "0" ]; then
             echo "legit-rm: error: '$i' in index is different to both working file and repository";
@@ -169,9 +181,9 @@ else
         elif [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
             echo "legit-rm: error: '$i' has changes staged in the index";
             exit 1;
-        elif [ -z $snap_sha ] && [ -z $index_sha ]; then
-            echo "legit-rm: error: '$i' is not in the legit repository";
-            exit 1;
+        # elif [ -z $snap_sha ] && [ -z $index_sha ]; then
+        #    echo "legit-rm: error: '$i' is not in the legit repository";
+        #    exit 1;
         fi
 
         if [ "$i" = "--cached" ] || [ "$i" = "--force" ] ; then

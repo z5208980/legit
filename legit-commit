@@ -19,6 +19,14 @@ do
     fi
 done
 
+#### error handling ####
+# cmd like ./legit-commit "message" -m
+if [ "$all" = "1" ] && [ "$2" != "-m" -o "$#" != "3" ]; then
+    echo "usage: legit-commit [-a] -m commit-message"; exit 1;
+elif [ "$all" != "1" ] && [ "$1" != "-m" -o "$#" != "2" ]; then 
+    echo "usage: legit-commit [-a] -m commit-message"; exit 1;
+fi
+
 if [ $msg -eq "0" ] || [ $# -lt 2 ] || [ $valid_msg -eq "0" ]; then
     echo "usage: legit-commit [-a] -m commit-message"; exit 1;
 fi

@@ -16,6 +16,10 @@ fi
 index='.legit/index';
 for i in $@
 do
+    if [ -d "$i" ]; then
+        echo "legit-add: error: '$i' is not a regular file";
+        exit 1;
+    fi
     if [ ! -f "$i" ] && [ "`grep -o "^$i\$" "$index/.status"`" ]; then
         # file has been rmed so take out of .status and index
         if [ -f "$index/.status" ]; then

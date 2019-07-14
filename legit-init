@@ -13,13 +13,18 @@ mkdir ".legit";
 touch ".legit/COMMIT_EDITMSG";      # -f    stores lastest commit msg
 
 index='.legit/index';
-mkdir "$index";               # -d    staging directory
-touch "$index/.status";       # -f    stores every file created
-touch "$index/.index";        # -f    stores files for commit
+mkdir "$index";                 # -d    staging directory
+touch "$index/.status";         # -f    stores every file created
+touch "$index/.index";          # -f    stores files for commit
 
 logs='.legit/logs';
-mkdir "$logs";                # -d    repo directory
-touch "$logs/HEAD";           # -f    legit logs
-mkdir "$logs/repo";           # -d    stores repos of commits   
+mkdir "$logs";                  # -d    repo directory
+touch "$logs/HEAD";             # -f    legit logs
+mkdir "$logs/repo";             # -d    stores repos of commits  
+
+branch='.legit/branches'; 
+mkdir "$branch";                # -d    store the branches
+mkdir "$branch/.tmp"            # -f    tmp to store file for transfer
+mkdir "$branch/master"            # -f    master branch
 
 echo "Initialized empty legit repository in .legit";
