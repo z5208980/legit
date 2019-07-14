@@ -102,11 +102,11 @@ elif [ $cached -eq "1" ]; then
         fi
 
         # FOR LINUX
-        # sed -i "/$i\$/d" "$index/.index"; # delete from status
+        sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        rm "$index/.index-e";
+        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        # rm "$index/.index-e";
     done
 elif [ $forced -eq "1" ]; then
     for i in "$@"
