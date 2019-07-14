@@ -36,6 +36,9 @@
 | 13/07/19 | 12:45 | 4:00  | coding    | passed subset[0,1] autotest                  |
 |          |       |       |           | added comments to code and tidy code         |
 +----------+-------+-------+-----------+----------------------------------------------+
-| 13/0719  | 7:30  | 11:00 | coding    | coded test[02..04].sh                        |
+| 13/0719  | 7:30  | 11:00 | coding    | coded test[02..04].sh added                  |
 |          |       |       |           | small debugging on legit-rm and status       |
++----------+-------+-------+-----------+----------------------------------------------+
+| 14/07/19 | 1:00  | 3:30  | coding    | coded test[05..07].sh added                  |
+|          |       |       |           | minor changes to to match legit reference    |
 +----------+-------+-------+-----------+----------------------------------------------+

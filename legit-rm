@@ -7,11 +7,11 @@ fi
 
 cached="0";
 forced="0";
-for i in "$@"
-do
-    [ "$i" =  "--cached" ] && cached="1";
-    [ "$i" = "--force" ] && forced="1";
-done
+# for i in "$@"
+# do
+[ "$1" =  "--cached" ] && cached="1";
+[ "$1" = "--force" ] && forced="1";
+# done
 
 if [ "$#" -eq 0 ]; then
     echo "usage: legit-rm [--force] [--cached] <filenames>"
@@ -21,9 +21,11 @@ if [ "$#" -gt 1 ]; then
     if echo "$1" | egrep -q "^--"; then
         if [ "$cached" = "0" ] && [ "$forced" = "0" ]; then
             echo "usage: legit-rm [--force] [--cached] <filenames>"
-            exit 1;
+            exit 1
         fi
     fi
+    echo "usage: legit-rm [--force] [--cached] <filenames>"
+    exit 1;
 fi
 
 index='.legit/index';
@@ -100,11 +102,11 @@ elif [ $cached -eq "1" ]; then
         fi
 
         # FOR LINUX
-        sed -i "/$i\$/d" "$index/.index"; # delete from status
+        # sed -i "/$i\$/d" "$index/.index"; # delete from status
 
         # FOR MAC
-        # sed -i -e "/$i\$/d" "$index/.index"; # delete from status
-        # rm "$index/.index-e";
+        sed -i -e "/$i\$/d" "$index/.index"; # delete from status
+        rm "$index/.index-e";
     done
 elif [ $forced -eq "1" ]; then
     for i in "$@"
