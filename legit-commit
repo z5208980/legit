@@ -33,6 +33,12 @@ fi
 
 index='.legit/index';
 
+commit_num="0";
+msg_file='.legit/COMMIT_EDITMSG';
+[ -s $msg_file ] && commit_num=`cut -d' ' -f1 $msg_file`;
+repo='.legit/logs/repo';
+snapshot="$repo/.snapshot.$commit_num";
+
 ####  stores every file made  ####
 touch "$index/.status";     # useful for deleted files
 for i in `ls`
@@ -54,10 +60,16 @@ if [ -f "$index/.index" ]; then
         if [ "`grep $hash "$index/.index"`" ]; then
             continue;
         else
-            echo "HERE";
-            index_sha="`grep $hash "$index/$i"`";
-            main_sha="`grep $hash "$i"`";
-            if [ "$index_sha" = "$main_sha" ]; then
+            index_sha="`sha1sum "$index/$i" | cut -d' ' -f1`";
+            main_sha="`sha1sum "$i" | cut -d' ' -f1`";
+            [ -d "$snapshot" -a -f "$snapshot/$i" ] && snap_sha="`sha1sum "$snapshot/$i" | cut -d' ' -f1`";
+             # echo "main: $main_sha"; echo "index: $index_sha"; echo "repo: $snap_sha";
+
+            if [ "$main_sha" = "$index_sha" ] && [ "$index_sha" != "$snap_sha" ]; then
+                commit_flag="1";
+            fi
+
+            if [ "$index_sha" != "$main_sha" ] && [ "$index_sha" = "$snap_sha" ]; then
                 commit_flag="0";
             else
                 commit_flag="1";
@@ -69,14 +81,7 @@ else
 fi
 
 ##### checks for rm #####
-commit_num="0";
-msg_file='.legit/COMMIT_EDITMSG';
-
-[ -s $msg_file ] && commit_num=`cut -d' ' -f1 $msg_file`;
-
 index_sha=`sha1sum "$index/.index" | cut -d' ' -f1`;
-repo='.legit/logs/repo';
-snapshot="$repo/.snapshot.$commit_num";
 
 [ -d "$snapshot" ] && snap_sha="`sha1sum "$snapshot/.index" | cut -d' ' -f1`";
 [ "$snap_sha" != "$index_sha" ] && commit_flag="1";
