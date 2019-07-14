@@ -78,4 +78,4 @@ echo "TEST: legit-rm a file that has never been committed to a repo"
 echo "TEST: legit-rm with multiple file arguments"
 ./legit-rm --force g h;   # legit-rm: error: '[gh]' is not in the legit repository
 
-# rm -rf .legit;
+rm -rf .legit a b c d e f g h;

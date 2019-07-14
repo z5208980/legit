@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/dash
 
 repo='.legit/logs/repo';
 commit_num=`echo $1 | cut -d':' -f1`;
